@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glowing Diamond Effect</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #111;
+      overflow: hidden;
+    }
+
+    .diamond-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      transform: rotate(45deg);
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .diamond {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, #00f7ff, #7700ff);
+      box-shadow: 
+        0 0 50px #00f7ff, 
+        0 0 100px #00f7ff,
+        0 0 150px #00f7ff;
+      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+      animation: 
+        glow 3s linear infinite,
+        colorShift 8s linear infinite;
+    }
+
+    .diamond::before {
+      content: '';
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      right: 5px;
+      bottom: 5px;
+      background: linear-gradient(45deg, #00f7ff, #7700ff);
+      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+      animation: 
+        shine 4s ease-in-out infinite,
+        colorShift 8s linear infinite reverse;
+    }
+
+    .diamond::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      background: #111;
+      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+      opacity: 0.8;
+    }
+
+    .light-beam {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(0,247,255,0.2) 0%, rgba(0,247,255,0) 70%);
+      border-radius: 50%;
+      top: -50px;
+      left: -50px;
+      z-index: -1;
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+      0%, 100% {
+        filter: drop-shadow(0 0 10px #00f7ff);
+      }
+      50% {
+        filter: drop-shadow(0 0 30px #00f7ff);
+      }
+    }
+
+    @keyframes colorShift {
+      0% {
+        filter: hue-rotate(0deg);
+      }
+      100% {
+        filter: hue-rotate(360deg);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: rotate(45deg) translateY(0);
+      }
+      50% {
+        transform: rotate(45deg) translateY(-20px);
+      }
+    }
+
+    @keyframes shine {
+      0%, 100% {
+        opacity: 0.7;
+      }
+      50% {
+        opacity: 0.2;
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 0.2;
+      }
+    }
+
+    .controls {
+      position: absolute;
+      bottom: 20px;
+      display: flex;
+      gap: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: rgba(0, 247, 255, 0.2);
+      color: white;
+      border: 1px solid #00f7ff;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    button:hover {
+      background: rgba(0, 247, 255, 0.4);
+      box-shadow: 0 0 10px #00f7ff;
+    }
+
+    .info {
+      position: absolute;
+      top: 20px;
+      color: white;
+      text-align: center;
+      max-width: 80%;
+      margin: 0 auto;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 8px;
+      border: 1px solid rgba(0, 247, 255, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="info">
+    <h1>Glowing Diamond Effect</h1>
+    <p>A CSS-created diamond with glowing, color-shifting effects. Hover over the diamond to enhance the glow.</p>
+  </div>
+
+  <div class="diamond-container" id="diamondContainer">
+    <div class="diamond"></div>
+    <div class="light-beam"></div>
+  </div>
+
+  <div class="controls">
+    <button id="colorBtn">Change Color</button>
+    <button id="sizeBtn">Random Size</button>
+    <button id="speedBtn">Random Speed</button>
+  </div>
+
+  <script>
+    const diamond = document.querySelector('.diamond');
+    const diamondBefore = document.querySelector('.diamond::before');
+    const container = document.getElementById('diamondContainer');
+    const colorBtn = document.getElementById('colorBtn');
+    const sizeBtn = document.getElementById('sizeBtn');
+    const speedBtn = document.getElementById('speedBtn');
+
+    // Random color generator
+    function getRandomColor() {
+      const hue = Math.floor(Math.random() * 360);
+      return `hsl(${hue}, 100%, 50%)`;
+    }
+
+    // Change diamond colors
+    colorBtn.addEventListener('click', () => {
+      const color1 = getRandomColor();
+      const color2 = getRandomColor();
+      
+      diamond.style.background = `linear-gradient(45deg, ${color1}, ${color2})`;
+      diamond.style.setProperty('--before-bg', `linear-gradient(45deg, ${color1}, ${color2})`);
+      diamond.style.boxShadow = `
+        0 0 50px ${color1}, 
+        0 0 100px ${color1},
+        0 0 150px ${color1}
+      `;
+    });
+
+    // Random size
+    sizeBtn.addEventListener('click', () => {
+      const size = Math.floor(Math.random() * 201) + 100; // 100-300px
+      container.style.width = `${size}px`;
+      container.style.height = `${size}px`;
+    });
+
+    // Random animation speed
+    speedBtn.addEventListener('click', () => {
+      const speed = Math.random() * 2 + 0.5;
+      diamond.style.animationDuration = `${speed}s`;
+    });
+
+    // Interactive hover effect
+    container.addEventListener('mouseenter', () => {
+      diamond.style.transform = 'rotate(45deg) scale(1.1)';
+      diamond.style.boxShadow = '0 0 100px #00f7ff';
+    });
+
+    container.addEventListener('mouseleave', () => {
+      diamond.style.transform = 'rotate(45deg) scale(1)';
+      diamond.style.boxShadow = `
+        0 0 50px #00f7ff, 
+        0 0 100px #00f7ff,
+        0 0 150px #00f7ff
+      `;
+    });
+  </script>
+</body>
+</html>
+
